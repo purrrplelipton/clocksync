@@ -1,0 +1,73 @@
+@use './abstracts' as *;
+@use './components' as comp;
+
+body {
+  width: 100vw;
+  height: 100vh;
+  background-color: $bg-color;
+  color: $text-color;
+  font-family: $primary-font;
+  display: grid;
+  place-items: center;
+}
+
+span {
+  text-transform: uppercase;
+}
+.app-container {
+  width: 40rem;
+  .tab-name {
+    font-size: 0.8rem;
+    margin-left: 1rem;
+    color: $start-btn-inactive;
+  }
+  .counter-container {
+    padding: 0.325rem 0.75rem;
+    margin: 1.25rem 1rem;
+    .big-num {
+      font-size: 3.875rem;
+      border-right: 1px solid transparent;
+    }
+    .x-tiny {
+      font-size: 1.75rem;
+      padding-right: 1.125rem;
+      text-transform: none;
+    }
+    .ms {
+      font-size: 2.25rem;
+    }
+  }
+  .btn-wrapper {
+    border-top: 1px solid $btn-wrapper-brdr;
+    padding: 1rem;
+    .btn-default {
+      border: none;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.4rem 0.5rem 0.325rem;
+      min-width: 3.75rem;
+      transition: all 0.15s ease-in-out;
+    }
+    .start-stop-btn {
+      background-color: $start-btn-inactive;
+      border: 1px solid $start-btn-inactive;
+      &:hover {
+        cursor: pointer;
+        background-color: $start-btn-active;
+        border-color: $start-btn-active;
+      }
+    }
+
+    .reset-btn {
+      margin-left: 1rem;
+      background-color: $reset-btn-inactive;
+      border: 1px solid $reset-btn-brdr;
+      &:hover {
+        cursor: pointer;
+        background-color: $reset-btn-active;
+        border-color: $reset-btn-active;
+      }
+    }
+  }
+}
