@@ -1,0 +1,29 @@
+.value-input-field {
+  font-size: 4em;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.125);
+}
+
+.value-input-field input {
+  width: 2ch;
+  border-width: 0;
+  background: none;
+  padding: 0;
+  position: relative;
+}
+
+.value-input-field input:not(:first-child, :last-child) {
+  /* margin: 0 0.125em; */
+}
+
+.value-input-field input:focus {
+  outline: transparent;
+  background-color: rgba(255, 255, 255, 0.125);
+}
+
+.value-input-field input::after {
+  content: attr(data-suffix);
+}

@@ -1,0 +1,43 @@
+.stopwatch-controls {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 64px;
+  padding: 0 1em;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(255, 255, 255, 0.125);
+}
+
+.stopwatch-controls div {
+  display: flex;
+  gap: 1.25em;
+}
+
+.stopwatch-controls button {
+  border-width: 0;
+  border-radius: 4px;
+  color: inherit;
+  font: inherit;
+  padding: 4px;
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.stopwatch-controls div button {
+  padding-inline: 8px;
+  font-size: 0.875em;
+  text-transform: uppercase;
+}
+
+.stopwatch-controls button:has(svg) {
+  font-size: 1.6em;
+  display: grid;
+  place-items: center;
+}
+
+.stopwatch-controls button svg {
+  fill: currentColor;
+}
