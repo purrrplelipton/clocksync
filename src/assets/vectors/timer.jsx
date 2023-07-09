@@ -1,5 +1,3 @@
-import React from "react";
-
 const TimerSvg = () => {
   return (
     <svg height="1em" viewBox="0 0 24 24" width="1em">

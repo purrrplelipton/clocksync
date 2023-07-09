@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { CONTEXT } from "../../../App";
 
 const Display = () => {
@@ -12,12 +12,12 @@ const Display = () => {
     <h1 className="time-elapsed">
       {hours ? (
         <span className="hours" data-suffix="h">
-          {stopwatch.timeElapsed.hours}
+          {hours}
         </span>
       ) : null}
       {minutes ? (
         <span className="minutes" data-suffix="m">
-          {stopwatch.timeElapsed.minutes}
+          {minutes}
         </span>
       ) : null}
       <span className="seconds" data-suffix="s">

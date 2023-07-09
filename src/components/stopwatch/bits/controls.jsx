@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { CONTEXT } from "../../../App";
-import FullscreenSvg from "../../../assets/vectors/fullscreen";
+import { FullscreenSvg } from "../../../assets/vectors";
 // import "../stopwatch.css";
 
 const Controls = () => {

@@ -1,64 +1,81 @@
-import React, { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { CONTEXT } from "../../../App";
 
 const Display = () => {
   const {
     timer: {
+      isRunning,
+      totalTime,
       value: { seconds, minutes, hours },
     },
     setTimer,
   } = useContext(CONTEXT);
+  const circleRef = useRef();
+
+  const handleInputChange = (val) => {
+    const trimmedVal = val.trim();
+
+    let updatedSeconds = 0,
+      updatedMinutes = 0,
+      updatedHours = 0;
+
+    const trimmedValLength = trimmedVal.length;
+
+    if (trimmedValLength === 1 || trimmedValLength === 2) {
+      updatedSeconds = parseInt(val, 10);
+    } else if (trimmedValLength === 3) {
+      updatedMinutes = parseInt(val[0], 10);
+      updatedSeconds = parseInt(val.substring(1), 10);
+    } else if (trimmedValLength === 4) {
+      updatedMinutes = parseInt(val.substring(0, 2), 10);
+      updatedSeconds = parseInt(val.substring(2), 10);
+    } else if (trimmedValLength === 5) {
+      updatedHours = parseInt(val.substring(0, 1), 10);
+      updatedMinutes = parseInt(val.substring(1, 3), 10);
+      updatedSeconds = parseInt(val.substring(3), 10);
+    } else if (trimmedValLength === 6) {
+      updatedHours = parseInt(val.substring(0, 2), 10);
+      updatedMinutes = parseInt(val.substring(2, 4), 10);
+      updatedSeconds = parseInt(val.substring(4), 10);
+    }
+
+    setTimer((prevState) => ({
+      ...prevState,
+      value: {
+        seconds: updatedSeconds,
+        minutes: updatedMinutes,
+        hours: updatedHours,
+      },
+    }));
+  };
+
+  useEffect(() => {
+    const remainingTime = hours * 3600 + minutes * 60 + seconds;
+    const circle = circleRef.current;
+    circle.style.backgroundImage = `conic-gradient(#242424 ${
+      ((totalTime - remainingTime) / totalTime) * 100
+    }%,rgba(255, 255, 255, 0.9) 0%)`;
+  }, [isRunning, totalTime, hours, minutes, seconds]);
 
   return (
-    <div>
+    <>
       <div className="value-input-field">
         <input
-          id="hours"
           type="text"
-          pattern="/\d/"
-          maxLength={2}
-          max={99}
-          value={hours}
-          onChange={({ target: { value } }) =>
-            setTimer((prevState) => ({
-              ...prevState,
-              value: { ...prevState.value, hours: value },
-            }))
-          }
-          data-suffix="h"
+          pattern="\d+"
+          onChange={({ target: { value } }) => handleInputChange(value)}
         />
-        <input
-          id="minutes"
-          type="text"
-          pattern="/\d/"
-          maxLength={2}
-          max={59}
-          value={minutes}
-          onChange={({ target: { value } }) =>
-            setTimer((prevState) => ({
-              ...prevState,
-              value: { ...prevState.value, minutes: value },
-            }))
-          }
-          data-suffix="m"
-        />
-        <input
-          id="seconds"
-          type="text"
-          pattern="/\d/"
-          maxLength={2}
-          max={59}
-          value={seconds}
-          onChange={({ target: { value } }) =>
-            setTimer((prevState) => ({
-              ...prevState,
-              value: { ...prevState.value, seconds: value },
-            }))
-          }
-          data-suffix="s"
-        />
+        <h1>
+          {String(hours).padStart(2, "0")}
+          <span className="suffix hours">h</span>
+          {String(minutes).padStart(2, "0")}
+          <span className="suffix minutes">m</span>
+          {String(seconds).padStart(2, "0")}
+          <span className="suffix seconds">s</span>
+        </h1>
       </div>
-    </div>
+      <div ref={circleRef} className="circle-thingamajig" />
+    </>
   );
 };
 

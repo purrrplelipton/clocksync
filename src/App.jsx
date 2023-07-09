@@ -14,6 +14,7 @@ function App() {
   const [mode, setMode] = useState("stopwatch");
   const [stopwatch, setStopwatch] = useState({
     isRunning: false,
+    laps: [],
     timeElapsed: {
       miliSeconds: 0,
       seconds: 0,
@@ -23,6 +24,7 @@ function App() {
   });
   const [timer, setTimer] = useState({
     isRunning: false,
+    totalTime: 0,
     value: { seconds: 0, minutes: 0, hours: 0 },
   });
 
@@ -71,13 +73,14 @@ function App() {
     },
   ];
 
-  const [docTitle, setDocTitle] = useState(mode);
+  // const [docTitle, setDocTitle] = useState(mode);
 
   useEffect(() => {
-    let interval = null;
+    let stopwatchInterval = null,
+      timerInterval = null;
 
     if (stopwatch.isRunning) {
-      interval = setInterval(() => {
+      stopwatchInterval = setInterval(() => {
         setStopwatch((prevState) => {
           document.title = `${
             stopwatch.timeElapsed.hours ? stopwatch.timeElapsed.hours : ""
@@ -94,7 +97,7 @@ function App() {
           };
 
           if (stopwatch.timeElapsed.miliSeconds >= 99) {
-            clearInterval(interval);
+            clearInterval(stopwatchInterval);
 
             setStopwatch((prevState) => ({
               ...prevState,
@@ -106,7 +109,7 @@ function App() {
             }));
 
             if (stopwatch.timeElapsed.seconds >= 59) {
-              clearInterval(interval);
+              clearInterval(stopwatchInterval);
 
               setStopwatch((prevState) => ({
                 ...prevState,
@@ -118,7 +121,7 @@ function App() {
               }));
 
               if (stopwatch.timeElapsed.minutes >= 59) {
-                clearInterval(interval);
+                clearInterval(stopwatchInterval);
 
                 setStopwatch((prevState) => ({
                   ...prevState,
@@ -138,9 +141,41 @@ function App() {
           };
         });
       }, 10);
+    } else if (timer.isRunning && timer.totalTime > 0) {
+      const totalTime =
+        timer.value.hours * 3600 +
+        timer.value.minutes * 60 +
+        timer.value.seconds;
+      let remainingTime = totalTime;
+
+      timerInterval = setInterval(() => {
+        setTimer((prevState) => {
+          remainingTime--;
+
+          if (remainingTime === 0) {
+            clearInterval(timerInterval);
+            setTimer((exState) => ({ ...exState, isRunning: false }));
+          }
+
+          return {
+            ...prevState,
+            totalTime,
+            value: {
+              hours: Math.floor(remainingTime / 3600),
+              minutes: Math.floor((remainingTime % 3600) / 60),
+              seconds: remainingTime % 60,
+            },
+          };
+        });
+      }, 1000);
     }
-    return () => clearInterval(interval);
-  }, [stopwatch]);
+
+    return () => {
+      console.log(timer.value);
+      clearInterval(stopwatchInterval);
+      clearInterval(timerInterval);
+    };
+  }, [stopwatch, timer]);
 
   return (
     <CONTEXT.Provider

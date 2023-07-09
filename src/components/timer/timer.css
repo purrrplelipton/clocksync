@@ -1,29 +1,139 @@
 .value-input-field {
   font-size: 4em;
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.125);
-}
-
-.value-input-field input {
-  width: 2ch;
-  border-width: 0;
-  background: none;
-  padding: 0;
+  /* background-color: rgba(255, 255, 255, 0.125); */
   position: relative;
 }
 
-.value-input-field input:not(:first-child, :last-child) {
-  /* margin: 0 0.125em; */
+.value-input-field h1 {
+  font-size: 1em;
+  margin: 0;
+  padding: 2px;
+  position: relative;
 }
 
-.value-input-field input:focus {
-  outline: transparent;
+.value-input-field h1 {
+  font-size: 1em;
+  margin: 0;
+  padding: 2px;
+  position: relative;
+}
+
+.value-input-field h1 .suffix {
+  font-size: 0.5em;
+  font-weight: lighter;
+}
+
+.value-input-field h1::before,
+.value-input-field h1::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: calc(100% - 2px);
+  background-color: currentColor;
+  opacity: 0;
+}
+
+.value-input-field h1::after {
+  top: calc(100% + 4px);
+  right: 0;
+  min-height: 2px;
+  left: 0;
+  opacity: 0.25;
+}
+
+@keyframes caret-blink {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.value-input-field input {
+  border-width: 0;
+  outline-width: 0;
+  background: none;
+  font-weight: bolder;
+  padding: 16px;
+  /* position: absolute; */
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  /* opacity: 0; */
+}
+
+.value-input-field input:focus + h1::before {
+  animation: caret-blink 0.8s ease-in-out infinite alternate;
+}
+
+.value-input-field input:focus + h1::after {
+  opacity: 0.75;
+}
+
+.timer-controls {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 64px;
+  padding: 0 1em;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
   background-color: rgba(255, 255, 255, 0.125);
 }
 
-.value-input-field input::after {
-  content: attr(data-suffix);
+.timer-controls div {
+  display: flex;
+  gap: 1.25em;
+}
+
+.timer-controls button {
+  border-width: 0;
+  border-radius: 4px;
+  color: inherit;
+  font: inherit;
+  padding: 4px;
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.timer-controls div button {
+  padding-inline: 8px;
+  font-size: 0.875em;
+  text-transform: uppercase;
+}
+
+.timer-controls button:has(svg) {
+  font-size: 1.6em;
+  display: grid;
+  place-items: center;
+}
+
+.timer-controls button svg {
+  fill: currentColor;
+}
+
+.circle-thingamajig {
+  position: absolute;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background-color: red;
+  /* margin: 1em; */
+  display: grid;
+  place-items: center;
+}
+
+.circle-thingamajig::after {
+  content: "";
+  position: absolute;
+  width: calc(100% - 4em);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background-color: #242424;
 }
