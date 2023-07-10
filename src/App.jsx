@@ -2,8 +2,13 @@ import { createContext, useEffect, useState } from "react";
 import "./App.css";
 import StopwatchIcon from "./assets/favicons/stopwatch.ico";
 import TimerIcon from "./assets/favicons/timer.ico";
-import StopwatchSvg from "./assets/vectors/stopwatch";
-import TimerSvg from "./assets/vectors/timer";
+import {
+  FullscreenSvg,
+  StopwatchSvg,
+  TimerSvg,
+  VolumeOffSvg,
+  VolumeUpSvg,
+} from "./assets/vectors";
 import Stopwatch from "./components/stopwatch";
 import Timer from "./components/timer";
 
@@ -25,6 +30,8 @@ function App() {
   const [timer, setTimer] = useState({
     isRunning: false,
     totalTime: 0,
+    isMute: false,
+    playAlarm: false,
     value: { seconds: 0, minutes: 0, hours: 0 },
   });
 
@@ -72,8 +79,6 @@ function App() {
         }),
     },
   ];
-
-  // const [docTitle, setDocTitle] = useState(mode);
 
   useEffect(() => {
     let stopwatchInterval = null,
@@ -141,29 +146,51 @@ function App() {
           };
         });
       }, 10);
-    } else if (timer.isRunning && timer.totalTime > 0) {
-      const totalTime =
-        timer.value.hours * 3600 +
-        timer.value.minutes * 60 +
-        timer.value.seconds;
-      let remainingTime = totalTime;
+    } else if (timer.isRunning) {
+      setTimer((prevState) => {
+        const totalTime =
+          prevState.value.hours * 3600 +
+          prevState.value.minutes * 60 +
+          prevState.value.seconds;
+
+        return { ...prevState, totalTime };
+      });
 
       timerInterval = setInterval(() => {
         setTimer((prevState) => {
-          remainingTime--;
+          const updatedTotalTime = prevState.totalTime - 1;
 
-          if (remainingTime === 0) {
+          if (updatedTotalTime === 0) {
+            document.title = "Timer";
             clearInterval(timerInterval);
-            setTimer((exState) => ({ ...exState, isRunning: false }));
+            return {
+              ...prevState,
+              playAlarm: true,
+              isRunning: false,
+              totalTime: 0,
+              value: {
+                hours: 0,
+                minutes: 0,
+                seconds: 0,
+              },
+            };
           }
+
+          let updatedHours = Math.floor(updatedTotalTime / 3600),
+            updatedMinutes = Math.floor((updatedTotalTime % 3600) / 60),
+            updatedSeconds = updatedTotalTime % 60;
+
+          document.title = `${String(updatedHours).padStart(2, "0")}:${String(
+            updatedMinutes
+          ).padStart(2, "0")}:${String(updatedSeconds).padStart(2, "0")}`;
 
           return {
             ...prevState,
-            totalTime,
+            totalTime: updatedTotalTime,
             value: {
-              hours: Math.floor(remainingTime / 3600),
-              minutes: Math.floor((remainingTime % 3600) / 60),
-              seconds: remainingTime % 60,
+              hours: updatedHours,
+              minutes: updatedMinutes,
+              seconds: updatedSeconds,
             },
           };
         });
@@ -171,11 +198,103 @@ function App() {
     }
 
     return () => {
-      console.log(timer.value);
       clearInterval(stopwatchInterval);
       clearInterval(timerInterval);
     };
-  }, [stopwatch, timer]);
+  }, [
+    stopwatch.isRunning,
+    timer.isRunning,
+    stopwatch.laps,
+    timer.totalTime,
+    stopwatch.timeElapsed,
+    timer.value,
+    stopwatch.timeElapsed.hours,
+    timer.value.hours,
+    stopwatch.timeElapsed.minutes,
+    timer.value.minutes,
+    stopwatch.timeElapsed.seconds,
+    timer.value.seconds,
+    stopwatch.timeElapsed.miliSeconds,
+    timer.isMute,
+  ]);
+  const CONTROL_BTNS =
+      mode === "stopwatch"
+        ? [
+            {
+              label: stopwatch.isRunning ? "stop" : "start",
+              clickFunc: () =>
+                setStopwatch((prevState) => ({
+                  ...prevState,
+                  isRunning: !prevState.isRunning,
+                })),
+            },
+            {
+              label: "reset",
+              clickFunc: () =>
+                setStopwatch((prevState) => {
+                  document.title = "Stopwatch";
+                  return {
+                    ...prevState,
+                    isRunning: false,
+                    laps: [],
+                    timeElapsed: {
+                      ...prevState.timeElapsed,
+                      miliSeconds: 0,
+                      seconds: 0,
+                      minutes: 0,
+                      hours: 0,
+                    },
+                  };
+                }),
+            },
+          ]
+        : [
+            {
+              label: timer.isRunning ? "stop" : "start",
+              clickFunc:
+                timer.value.hours * 3600 +
+                  timer.value.minutes * 60 +
+                  timer.value.seconds ===
+                0
+                  ? () => null
+                  : () =>
+                      setTimer((prevState) => ({
+                        ...prevState,
+                        isRunning: !prevState.isRunning,
+                      })),
+            },
+            {
+              label: "reset",
+              clickFunc: () => {
+                document.title = "Timer";
+                return setTimer((prevState) => ({
+                  ...prevState,
+                  isRunning: false,
+                  playAlarm: false,
+                  value: { seconds: 0, minutes: 0, hours: 0 },
+                }));
+              },
+            },
+          ],
+    extras = [
+      {
+        label: timer.isMute ? "unmute" : "mute",
+        clickFunc: () => {
+          return setTimer((prevState) => ({
+            ...prevState,
+            playAlarm: !prevState.playAlarm,
+          }));
+        },
+        icon: timer.playAlarm ? <VolumeUpSvg /> : <VolumeOffSvg />,
+      },
+      {
+        label: "fullscreen",
+        clickFunc: () => {},
+        icon: <FullscreenSvg />,
+      },
+    ];
+
+  if (mode === "stopwatch") extras.shift();
 
   return (
     <CONTEXT.Provider
@@ -195,6 +314,33 @@ function App() {
         ))}
       </header>
       {mode === "stopwatch" ? <Stopwatch /> : <Timer />}
+      <footer className="controls">
+        <div className="start-stop-reset">
+          {CONTROL_BTNS.map(({ label, clickFunc }) => (
+            <button
+              type="button"
+              key={label}
+              onClick={clickFunc}
+              className={`${label}-btn`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <div className="extras">
+          {extras.map(({ label, clickFunc, icon }) => (
+            <button
+              type="button"
+              key={label}
+              onClick={clickFunc}
+              className={`${label}-btn`}
+              aria-label={label}
+            >
+              {icon}
+            </button>
+          ))}
+        </div>
+      </footer>
     </CONTEXT.Provider>
   );
 }

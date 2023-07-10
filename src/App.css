@@ -6,47 +6,30 @@ header {
   height: 64px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  backdrop-filter: blur(8px);
-  background-color: rgba(255, 255, 255, 0.125);
-}
-
-header::before {
-  position: absolute;
-  content: "";
-  height: 100%;
-  width: 1px;
-  background-color: currentColor;
-  inset: 0;
-  margin: auto;
-  opacity: 0.125;
-  z-index: -1;
+  background-color: hsl(0, 0%, 25%);
 }
 
 header button {
   border-width: 0;
   background: none;
   text-transform: uppercase;
+  font-size: 1.125em;
   font-weight: bolder;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
   gap: 0.5em;
+  color: hsl(0, 0%, 45%);
 }
 
-header button :first-child {
+header button svg {
   fill: currentColor;
-}
-header button * {
-  opacity: 0.3;
 }
 
 header button.active {
+  color: inherit;
   position: relative;
-}
-
-header button.active * {
-  opacity: 1;
 }
 
 header button.active::after {
@@ -59,26 +42,51 @@ header button.active::after {
   background-color: currentColor;
 }
 
-.time-elapsed {
-  font-size: 4em;
-  /* display: flex; */
+.controls {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 64px;
+  padding: 0 1.25em;
+  display: flex;
   flex-flow: row nowrap;
-  align-items: flex-end;
-  gap: 0.2em;
+  align-items: center;
+  justify-content: space-between;
+  background-color: hsl(0, 0%, 25%);
 }
 
-.time-elapsed [data-suffix] {
-  position: relative;
+.controls div {
+  display: flex;
+  gap: 1.25em;
 }
 
-.time-elapsed [data-suffix]::after {
-  font-weight: lighter;
-  content: attr(data-suffix);
-  font-size: 0.375em;
-  padding: 0 0.5em 0 0.125em;
+.controls button {
+  font-size: 1.125em;
+  border: 1px solid transparent;
+  padding: 4px;
+  background-color: hsl(0, 0%, 22.5%);
 }
 
-.time-elapsed span.miliseconds {
-  font-size: 0.5em;
-  font-weight: lighter;
+.controls div.start-stop-reset button {
+  padding-right: 10px;
+  padding-left: 10px;
+  font-size: 1em;
+  font-weight: bolder;
+  text-transform: uppercase;
+}
+
+.controls div.start-stop-reset button:last-child {
+  background: none;
+  border-color: hsl(0, 0%, 75%);
+}
+
+.controls div.extras button:has(svg) {
+  font-size: 1.5em;
+  display: grid;
+  place-items: center;
+}
+
+.controls button svg {
+  fill: currentColor;
 }
